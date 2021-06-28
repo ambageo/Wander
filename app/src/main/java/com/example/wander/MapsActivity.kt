@@ -1,11 +1,15 @@
 package com.example.wander
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -21,6 +25,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+
+    private val REQUEST_PERMISSION_LOCATION = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +50,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
+
+        enableLocation()
+
         map = googleMap
 
         // Add a marker in home and move the camera. Also provide zoom level/
@@ -62,6 +71,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         setMapLongClick(map)
         setPoiClick(map)
         setMapStyle(map)
+    }
+
+    private fun enableLocation() {
+        if ( isPermissionGranted()) {
+            map.setMyLocationEnabled(true)
+        } else {
+            ActivityCompat.requestPermissions(this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_PERMISSION_LOCATION)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if( requestCode == REQUEST_PERMISSION_LOCATION ) {
+           if( grantResults.isNotEmpty() && (grantResults[0] ==PackageManager.PERMISSION_GRANTED)){
+               enableLocation()
+           }
+       }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -88,6 +118,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun isPermissionGranted(): Boolean {
+        return ContextCompat.
+        checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun setMapLongClick(map: GoogleMap) {
