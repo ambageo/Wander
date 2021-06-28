@@ -51,6 +51,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val zoom = 16f
         map.addMarker(MarkerOptions().position(home).title("Marker in home"))
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom))
+
+        // Add a ground overlay
+        val overlaySize = 100f
+        val androidOverlay = GroundOverlayOptions()
+            .image(BitmapDescriptorFactory.fromResource(R.drawable.android))
+            .position(home, overlaySize)
+        map.addGroundOverlay(androidOverlay)
+
         setMapLongClick(map)
         setPoiClick(map)
         setMapStyle(map)
