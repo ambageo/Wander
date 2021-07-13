@@ -51,8 +51,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
 
-        enableLocation()
-
         map = googleMap
 
         // Add a marker in home and move the camera. Also provide zoom level/
@@ -67,6 +65,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .image(BitmapDescriptorFactory.fromResource(R.drawable.android))
             .position(home, overlaySize)
         map.addGroundOverlay(androidOverlay)
+
+        enableLocation()
 
         setMapLongClick(map)
         setPoiClick(map)
